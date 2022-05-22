@@ -36,12 +36,12 @@ public class BurpExtender implements IBurpExtender, IHttpListener {
 
     @Override
     public void processHttpMessage(int flag, boolean isRequest, IHttpRequestResponse message) {
+        IRequestInfo req = this.helpers.analyzeRequest(message);
         if (!isRequest&&(IBurpExtenderCallbacks.TOOL_PROXY == flag||IBurpExtenderCallbacks.TOOL_SPIDER == flag)
-                && (this.ibec.isInScope(message.getUrl()))) {
+                && (this.ibec.isInScope(req.getUrl()))) {
             if (this.uInterface.alreadyExists(message)) {
                 return;
             }
-            IRequestInfo req = this.helpers.analyzeRequest(message);
             List<String> headers = req.getHeaders();
             for (int i = headers.size() - 1; i >= 0; i--) {
                 String header = (String) headers.get(i);
@@ -53,14 +53,11 @@ public class BurpExtender implements IBurpExtender, IHttpListener {
                 if (header.startsWith("Origin")) {
                     headers.remove(i);
                 }
-//                if (get.startsWith("Referer")) {
-//                    headers.remove(i);
-//                }
             }
             headers.add("X-Forwarded-For: burp.header.injector.xff");
+            headers.add("X-Forwarded-Proto: burp.header.injector.xfproto");
             headers.add("X-Forwarded-Host: burp.header.injector.xfh");
-//            headers.add("Origin: burp.header.injector.origin");
-//            headers.add("Referer: burp.header.injector.referer");
+            
             byte[] newMsg = helpers.buildHttpMessage(headers, ("post".equals(req.getMethod().toLowerCase()))?Arrays.copyOfRange(message.getRequest(), req.getBodyOffset(), message.getRequest().length):null);   
             IHttpRequestResponse newResponse = this.ibec.makeHttpRequest(message.getHttpService(), newMsg);
             byte[] response = newResponse.getResponse();

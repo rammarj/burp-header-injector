@@ -7,6 +7,7 @@ import burp.IHttpService;
 import burp.IMessageEditor;
 import burp.IMessageEditorController;
 import burp.IRequestInfo;
+import burp.IResponseInfo;
 import burp.util.IHttpServiceImpl;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -35,7 +36,8 @@ import javax.swing.table.DefaultTableModel;
  */
 public class UInterface extends JPanel implements ActionListener {
 
-    private DefaultTableModel requestsModel;
+	private static final long serialVersionUID = 1L;
+	private DefaultTableModel requestsModel;
     private IMessageEditor msgeditorRequest, msgeditorResponse;
     private LinkedList<IHttpRequestResponse> requestsList;
     private IExtensionHelpers helpers;
@@ -131,8 +133,9 @@ public class UInterface extends JPanel implements ActionListener {
         if (!alreadyExists(original)) {
             this.requestsList.add(original);
             IRequestInfo requestInfo = this.helpers.analyzeRequest(original);
+            IResponseInfo responseInfo = this.helpers.analyzeResponse(original.getResponse());
             this.requestsModel.addRow(new String[]{requestInfo.getMethod(), requestInfo.getUrl().toString(),
-                String.valueOf(original.getStatusCode())});
+                String.valueOf(responseInfo.getStatusCode())});
         }
     }
 
