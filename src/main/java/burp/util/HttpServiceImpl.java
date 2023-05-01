@@ -8,15 +8,15 @@ import java.net.URL;
  *
  * @author Joaquin R. Martinez
  */
-public class IHttpServiceImpl implements IHttpService {
+public class HttpServiceImpl implements IHttpService {
 
     private URL url;
 
-    public IHttpServiceImpl(URL url) {
+    public HttpServiceImpl(URL url) {
         this.url = url;
     }
 
-    public IHttpServiceImpl(IRequestInfo info) {
+    public HttpServiceImpl(IRequestInfo info) {
         this(info.getUrl());
     }
 
