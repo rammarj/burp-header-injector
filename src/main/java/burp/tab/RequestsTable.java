@@ -1,6 +1,5 @@
-package burp.userinterface;
+package burp.tab;
 
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import javax.swing.JTable;
@@ -42,8 +41,8 @@ public abstract class RequestsTable extends JTable implements ListSelectionListe
 	}
 
 	public void addRow(IHttpRequestResponse original) {
-		if (!alreadyExists(original)) {
-			IRequestInfo requestInfo = this.helpers.analyzeRequest(original);
+		IRequestInfo requestInfo = this.helpers.analyzeRequest(original);
+		if (!alreadyExists(requestInfo.getUrl().toString())) {
 			IResponseInfo responseInfo = this.helpers.analyzeResponse(original.getResponse());
 			this.requestsList.put(requestInfo.getUrl().toString(), original);
 			String requestCount = String.valueOf(this.contRequests++);
@@ -54,9 +53,8 @@ public abstract class RequestsTable extends JTable implements ListSelectionListe
 		}
 	}
 
-	public boolean alreadyExists(IHttpRequestResponse original) {
-		URL url = helpers.analyzeRequest(original).getUrl();
-		return this.requestsList.containsKey(url.toString());
+	public boolean alreadyExists(String url) {
+		return this.requestsList.containsKey(url);
 	}
 
 	public void clear() {
